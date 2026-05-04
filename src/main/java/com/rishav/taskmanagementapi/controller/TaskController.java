@@ -6,6 +6,8 @@ import com.rishav.taskmanagementapi.dto.TaskResponseDto;
 import com.rishav.taskmanagementapi.model.Task;
 import com.rishav.taskmanagementapi.service.TaskService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,8 +33,8 @@ public class TaskController {
     }
 
     @GetMapping("/task")
-    public List<TaskResponseDto> getAllTask(){
-        return taskService.getAllTasks();
+    public Page<TaskResponseDto> getAllTasks(Pageable pageable) {
+        return taskService.getAllTasks(pageable);
     }
 
     @GetMapping("/task/{id}")

@@ -4,9 +4,12 @@ package com.rishav.taskmanagementapi.service;
 import com.rishav.taskmanagementapi.dto.TaskRequestDto;
 import com.rishav.taskmanagementapi.dto.TaskResponseDto;
 import com.rishav.taskmanagementapi.exception.ResourceNotFoundException;
+import com.rishav.taskmanagementapi.model.Status;
 import com.rishav.taskmanagementapi.model.Task;
 import com.rishav.taskmanagementapi.repository.TaskRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -45,11 +48,10 @@ public class TaskService {
         return mapToResponse(saved);
     }
 
-    public List<TaskResponseDto> getAllTasks(){
-        return taskRepository.findAll()
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
+    public Page<TaskResponseDto> getAllTasks(Pageable pageable) {
+        Page<Task> page = taskRepository.findAll(pageable);
+
+        return page.map(this::mapToResponse);
     }
 
     public TaskResponseDto getTaskById(Long id){
