@@ -1,6 +1,8 @@
 package com.rishav.taskmanagementapi.service;
 
 
+import com.rishav.taskmanagementapi.dto.TaskRequestDto;
+import com.rishav.taskmanagementapi.dto.TaskResponseDto;
 import com.rishav.taskmanagementapi.exception.ResourceNotFoundException;
 import com.rishav.taskmanagementapi.model.Task;
 import com.rishav.taskmanagementapi.repository.TaskRepository;
@@ -17,32 +19,62 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
-    public Task createTask(Task task){
-        return taskRepository.save(task);
+    private TaskResponseDto mapToResponse(Task task){
+        return TaskResponseDto.builder()
+                .id(task.getId())
+                .title(task.getTitle())
+                .description(task.getDescription())
+                .status(task.getStatus())
+                .priority(task.getPriority())
+                .build();
     }
 
-    public List<Task> getAllTasks(){
-        return taskRepository.findAll();
+    private Task mapToEntity(TaskRequestDto dto){
+        return Task.builder()
+                .title(dto.getTitle())
+                .description(dto.getDescription())
+                .status(dto.getStatus())
+                .priority(dto.getPriority())
+                .build();
     }
 
-    public Task getTaskById(Long id){
-        return taskRepository.findById(id)
+
+    public TaskResponseDto createTask(TaskRequestDto dto){
+        Task task = mapToEntity(dto);
+        Task saved = taskRepository.save(task);
+        return mapToResponse(saved);
+    }
+
+    public List<TaskResponseDto> getAllTasks(){
+        return taskRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    public TaskResponseDto getTaskById(Long id){
+        Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
+
+        return mapToResponse(task);
     }
 
-    public Task updateTask(Long id, Task updatedTask){
-        Task existingTask = getTaskById(id);
+    public TaskResponseDto updateTask(Long id, TaskRequestDto dto){
+        Task existingTask = taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
 
-        existingTask.setTitle(updatedTask.getTitle());
-        existingTask.setDescription(updatedTask.getDescription());
-        existingTask.setStatus(updatedTask.getStatus());
-        existingTask.setPriority(updatedTask.getPriority());
+        existingTask.setTitle(dto.getTitle());
+        existingTask.setDescription(dto.getDescription());
+        existingTask.setStatus(dto.getStatus());
+        existingTask.setPriority(dto.getPriority());
 
-        return taskRepository.save(existingTask);
+        return mapToResponse(taskRepository.save(existingTask));
     }
 
     public void deleteTask(Long id){
-//        Task task = getTaskById(id);
+        if (!taskRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Task not found with id: " + id);
+        }
         taskRepository.deleteById(id);
     }
 

@@ -1,8 +1,11 @@
 package com.rishav.taskmanagementapi.controller;
 
 
+import com.rishav.taskmanagementapi.dto.TaskRequestDto;
+import com.rishav.taskmanagementapi.dto.TaskResponseDto;
 import com.rishav.taskmanagementapi.model.Task;
 import com.rishav.taskmanagementapi.service.TaskService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,23 +26,23 @@ public class TaskController {
     }
 
     @PostMapping("/task")
-    public Task createTask(@RequestBody Task task){
-        return taskService.createTask(task);
+    public TaskResponseDto createTask(@Valid @RequestBody TaskRequestDto dto){
+        return taskService.createTask(dto);
     }
 
     @GetMapping("/task")
-    public List<Task> getAllTask(){
+    public List<TaskResponseDto> getAllTask(){
         return taskService.getAllTasks();
     }
 
     @GetMapping("/task/{id}")
-    public Task getTaskById(@PathVariable Long id){
+    public TaskResponseDto getTaskById(@PathVariable Long id){
         return taskService.getTaskById(id);
     }
 
     @PutMapping("/task/{id}")
-    public Task updateTask(@PathVariable Long id, @RequestBody Task task){
-        return taskService.updateTask(id, task);
+    public TaskResponseDto updateTask(@PathVariable Long id, @Valid @RequestBody TaskRequestDto dto){
+        return taskService.updateTask(id, dto);
     }
 
     @DeleteMapping("/task/{id}")
