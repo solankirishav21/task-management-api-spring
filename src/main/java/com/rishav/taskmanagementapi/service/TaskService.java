@@ -1,6 +1,7 @@
 package com.rishav.taskmanagementapi.service;
 
 
+import com.rishav.taskmanagementapi.exception.ResourceNotFoundException;
 import com.rishav.taskmanagementapi.model.Task;
 import com.rishav.taskmanagementapi.repository.TaskRepository;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class TaskService {
 
     public Task getTaskById(Long id){
         return taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found" + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
     }
 
     public Task updateTask(Long id, Task updatedTask){
