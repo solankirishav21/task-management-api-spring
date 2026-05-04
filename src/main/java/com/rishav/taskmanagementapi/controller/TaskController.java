@@ -31,4 +31,20 @@ public class TaskController {
     public List<Task> getAllTask(){
         return taskService.getAllTasks();
     }
+
+    @GetMapping("/task/{id}")
+    public Task getTaskById(@PathVariable Long id){
+        return taskService.getTaskById(id);
+    }
+
+    @PutMapping("/task/{id}")
+    public Task updateTask(@PathVariable Long id, @RequestBody Task task){
+        return taskService.updateTask(id, task);
+    }
+
+    @DeleteMapping("/task/{id}")
+    public String deleteTask(@PathVariable Long id){
+        taskService.deleteTask(id);
+        return "Task deleted successfully!";
+    }
 }
